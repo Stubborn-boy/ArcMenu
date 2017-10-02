@@ -1,0 +1,55 @@
+<com.example.arcmenu.view.ArcMenu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_arcmenu"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:radius="360dp"
+    app:angle="45" >
+
+    <TextView
+        android:id="@+id/id_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/yuan"
+        android:gravity="center"
+        android:text="A"
+        android:textSize="16dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/yuan"
+        android:gravity="center"
+        android:text="B"
+        android:textSize="16dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/yuan"
+        android:gravity="center"
+        android:text="+"
+        android:textSize="16dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/yuan"
+        android:gravity="center"
+        android:text="C"
+        android:textSize="16dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/yuan"
+        android:gravity="center"
+        android:text="D"
+        android:textSize="16dp"
+        android:textColor="#FFFFFF" />
+
+</com.example.arcmenu.view.ArcMenu>
