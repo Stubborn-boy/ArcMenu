@@ -38,8 +38,7 @@ public class ArcMenu  extends ViewGroup implements View.OnClickListener {
     /**
      * 点击子菜单项的回调接口
      */
-    public interface OnMenuItemClickListener
-    {
+    public interface OnMenuItemClickListener{
         void onClick(View view, int pos);
     }
 
@@ -57,7 +56,7 @@ public class ArcMenu  extends ViewGroup implements View.OnClickListener {
 
     public ArcMenu(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 360, getResources().getDisplayMetrics());
+        //mRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 360, getResources().getDisplayMetrics());
         // 获取自定义属性的值
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.ArcMenu, defStyleAttr, 0);
@@ -81,14 +80,12 @@ public class ArcMenu  extends ViewGroup implements View.OnClickListener {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (changed)
-        {
+        if (changed){
             int count = getChildCount();
-            //设置第三个子View为主按钮
+            //设置中间的子View为主按钮
             mMainButton = getChildAt(count/2);
             mMainButton.setOnClickListener(this);
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++){
                 View child = getChildAt(i);
                 //开始时隐藏非主按钮
                 if(!child.equals(mMainButton)){
