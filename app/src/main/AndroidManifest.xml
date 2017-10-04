@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ArcMenuActivity"/>
+        <activity android:name=".ArcDragMenuActivity"/>
     </application>
 
 </manifest>

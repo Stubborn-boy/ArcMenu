@@ -6,5 +6,6 @@
     </declare-styleable>
     <declare-styleable name="ArcDragMenu">
         <attr name="mradius" format="dimension" />
+        <attr name="visibleitemcount" format="integer" />
     </declare-styleable>
 </resources>

@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.arcdragmenu:
-
+                intent = new Intent(this, ArcDragMenuActivity.class);
+                startActivity(intent);
                 break;
         }
     }
