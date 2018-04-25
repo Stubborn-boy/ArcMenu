@@ -3,6 +3,8 @@ package com.example.arcmenu.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -71,6 +73,8 @@ public class ArcDragMenu extends ViewGroup {
 	 * 计算间隔角度
 	 */
 	double angleDelay;
+
+	int childHeight = 0;
 	
 	private int mMenuItemLayoutId = R.layout.item_arcdragmenu;
 	
@@ -129,9 +133,10 @@ public class ArcDragMenu extends ViewGroup {
 		int count = getChildCount();
 		for (int i = 0; i < count; i++){
 			View child = getChildAt(i);
+			childHeight = child.getMeasuredHeight();
 			//子View的左上角坐标（cl,ct）
 			int cl = (int) (mRadius * Math.sin(angle)) + getMeasuredWidth()/2 - child.getMeasuredWidth()/2;
-			int ct = (int) (mRadius * Math.cos(angle)) ;
+			int ct = (int) (mRadius * Math.cos(angle));
 			//测量的子View的宽，高
 			int cWidth = child.getMeasuredWidth();
 			int cHeight = child.getMeasuredHeight();
@@ -149,6 +154,9 @@ public class ArcDragMenu extends ViewGroup {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if(!isInViewRect(ev.getX(), ev.getY())){
+			return false;
+		}
 		float x = ev.getRawX();
 		float y = ev.getRawY();
 		switch (ev.getAction()) {
@@ -164,7 +172,11 @@ public class ArcDragMenu extends ViewGroup {
 					isFling = false;
 					return true;
 				}
+				if(!isInChildView((int) x, (int) y)){
+					return true;
+				}
 				break;
+				//return true;
 			case MotionEvent.ACTION_MOVE:
 				/**
 				 * 获得开始的角度
@@ -310,6 +322,8 @@ public class ArcDragMenu extends ViewGroup {
 		}
 	}
 
+	Region re = new Region();
+	Path mPath = new Path();
 	/**
 	 *  判断一个点是否在封闭的Path内或不规则的图形内
 	 * http://blog.csdn.net/nn955/article/details/49784341
@@ -318,13 +332,16 @@ public class ArcDragMenu extends ViewGroup {
 	 * @return
 	 */
 	public boolean isInViewRect(float x,float y) {
-		Path mPath = new Path();
-		RectF mRectF = new RectF(getMeasuredWidth()/2-mRadius, -mRadius, getMeasuredWidth()/2+mRadius, mRadius);
-		mPath.arcTo(mRectF, 60, 60);
-		RectF mRectF1 = new RectF(getMeasuredWidth()/2-(mRadius+60), -(mRadius+60), getMeasuredWidth()/2+(mRadius+60), mRadius+60);
-		mPath.arcTo(mRectF1, 120, -60);
+		int radius = mRadius-10;
+		RectF mRectF = new RectF(getMeasuredWidth()/2-radius, -radius, getMeasuredWidth()/2+radius, radius);
+		float startAngle = (float) (90 - angleDelay *(mVisiableItemCount /2.0f) * 180 / Math.PI);
+		float sweepAngle = (float) (angleDelay*5 * 180 / Math.PI);
+		mPath.arcTo(mRectF, startAngle, sweepAngle);
 
-		Region re=new Region();
+		int radius1 = mRadius+childHeight+10;
+		RectF mRectF1 = new RectF(getMeasuredWidth()/2-radius1, -radius1, getMeasuredWidth()/2+radius1, radius1);
+		mPath.arcTo(mRectF1, startAngle+sweepAngle, -sweepAngle);
+		mPath.close();
 
 		RectF r=new RectF();
 		//计算控制点的边界
@@ -334,6 +351,35 @@ public class ArcDragMenu extends ViewGroup {
 		re.setPath(mPath, new Region((int)r.left,(int)r.top,(int)r.right,(int)r.bottom));
 
 		return re.contains((int)x, (int)y);
+	}
+
+	public boolean isInChildView(int x, int y){
+		int count = getChildCount();
+		for (int i = 0; i < count; i++) {
+			View child = getChildAt(i);
+			if(isTouchPointInView(child, x, y)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	//(x,y)是否在view的区域内
+	private boolean isTouchPointInView(View view, int x, int y) {
+		if (view == null) {
+			return false;
+		}
+		int[] location = new int[2];
+		view.getLocationOnScreen(location);
+		int left = location[0];
+		int top = location[1];
+		int right = left + view.getMeasuredWidth();
+		int bottom = top + view.getMeasuredHeight();
+		if (y >= top && y <= bottom && x >= left
+				&& x <= right) {
+			return true;
+		}
+		return false;
 	}
 
 }
