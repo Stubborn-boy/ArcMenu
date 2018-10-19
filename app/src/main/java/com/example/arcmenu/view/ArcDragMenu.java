@@ -3,8 +3,6 @@ package com.example.arcmenu.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -19,6 +17,11 @@ import android.widget.ImageView;
 import com.example.arcmenu.R;
 
 public class ArcDragMenu extends ViewGroup {
+
+	private enum Direction{
+		BOTTOM,
+		TOP
+	}
 
 	/**
 	 * 当每秒移动角度达到该值时，认为是快速移动
@@ -40,6 +43,10 @@ public class ArcDragMenu extends ViewGroup {
 	private int mMenuItemCount;
 	
 	private int mVisiableItemCount;
+
+	private int mDirection;
+
+	private int mYoffset;
 	
 	/**
 	 * 检测按下到抬起时旋转的角度
@@ -108,6 +115,10 @@ public class ArcDragMenu extends ViewGroup {
 				.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 360,
 						getResources().getDisplayMetrics()));
 		mVisiableItemCount = (int) a.getInteger(R.styleable.ArcDragMenu_visibleitemcount, 5);
+		mDirection = (int) a.getInteger(R.styleable.ArcDragMenu_direction, 0);
+		mYoffset = (int) a.getDimension(R.styleable.ArcDragMenu_yoffset, TypedValue
+				.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0,
+						getResources().getDisplayMetrics()));;
 		a.recycle();
 		setWillNotDraw(false);
 	}
@@ -136,7 +147,13 @@ public class ArcDragMenu extends ViewGroup {
 			childHeight = child.getMeasuredHeight();
 			//子View的左上角坐标（cl,ct）
 			int cl = (int) (mRadius * Math.sin(angle)) + getMeasuredWidth()/2 - child.getMeasuredWidth()/2;
-			int ct = (int) (mRadius * Math.cos(angle));
+			//int ct = (int) (mRadius * Math.cos(angle));
+			int ct;
+			if(mDirection == Direction.TOP.ordinal()){
+				ct = (int) (mRadius - mRadius * Math.cos(angle)) + mYoffset;
+			}else{
+				ct = (int) (mRadius * Math.cos(angle)) + mYoffset;
+			}
 			//测量的子View的宽，高
 			int cWidth = child.getMeasuredWidth();
 			int cHeight = child.getMeasuredHeight();
@@ -332,14 +349,34 @@ public class ArcDragMenu extends ViewGroup {
 	 * @return
 	 */
 	public boolean isInViewRect(float x,float y) {
-		int radius = mRadius-10;
-		RectF mRectF = new RectF(getMeasuredWidth()/2-radius, -radius, getMeasuredWidth()/2+radius, radius);
-		float startAngle = (float) (90 - angleDelay *(mVisiableItemCount /2.0f) * 180 / Math.PI);
+		int top;
+		int bottom;
+		float startAngle;
+		int radius = mRadius;
+		if(mDirection == Direction.TOP.ordinal()){
+			top = childHeight + mYoffset;
+			bottom = 2*radius +childHeight  + mYoffset;
+			startAngle = (float) (90 - angleDelay *(mVisiableItemCount /2.0f) * 180 / Math.PI) + 180;
+		}else{
+			top = -radius  + mYoffset;
+			bottom = radius  + mYoffset;
+			startAngle = (float) (90 - angleDelay *(mVisiableItemCount /2.0f) * 180 / Math.PI);
+		}
 		float sweepAngle = (float) (angleDelay*5 * 180 / Math.PI);
+		RectF mRectF = new RectF(getMeasuredWidth()/2-radius, top, getMeasuredWidth()/2+radius, bottom);
 		mPath.arcTo(mRectF, startAngle, sweepAngle);
 
-		int radius1 = mRadius+childHeight+10;
-		RectF mRectF1 = new RectF(getMeasuredWidth()/2-radius1, -radius1, getMeasuredWidth()/2+radius1, radius1);
+		int top1;
+		int bottom1;
+		int radius1 = mRadius+childHeight;
+		if(mDirection == Direction.TOP.ordinal()){
+			top1 = 0  + mYoffset;
+			bottom1 = 2*(radius1)  + mYoffset;
+		}else{
+			top1 = -(radius1)  + mYoffset;
+			bottom1 = radius1  + mYoffset;
+		}
+		RectF mRectF1 = new RectF(getMeasuredWidth()/2-radius1, top1, getMeasuredWidth()/2+radius1, bottom1);
 		mPath.arcTo(mRectF1, startAngle+sweepAngle, -sweepAngle);
 		mPath.close();
 

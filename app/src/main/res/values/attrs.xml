@@ -7,5 +7,10 @@
     <declare-styleable name="ArcDragMenu">
         <attr name="mradius" format="dimension" />
         <attr name="visibleitemcount" format="integer" />
+        <attr name="yoffset" format="dimension" />
+        <attr name="direction" format="enum" >
+            <enum name="bottom" value="0"/>
+            <enum name="top" value="1"/>
+        </attr>
     </declare-styleable>
 </resources>

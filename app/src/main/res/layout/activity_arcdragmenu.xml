@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:mradius="360dp"
-        app:visibleitemcount="5"/>
+        app:visibleitemcount="5"
+        app:direction="top"
+        app:yoffset="100dp"/>
 
 </LinearLayout>
